@@ -32,6 +32,21 @@ namespace CinemaAPI.Controllers
             movies.Add(newMovie);
 
         }
-      
+
+
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] Movie newMovie)
+        {
+
+            movies[id] = newMovie;
+
+        }
+
+        [HttpDelete("{id}")]
+        public void Delete(int id) {
+
+            movies.RemoveAt(id);
+        }
+
     }
 }
