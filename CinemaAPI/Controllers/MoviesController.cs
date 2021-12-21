@@ -92,8 +92,6 @@ namespace CinemaAPI.Controllers
                     currentMovie.ImageUrl = filePath.Remove(0, 7);
 
                 }
-
-
                 currentMovie.Name = newMovie.Name;
                 currentMovie.Language = newMovie.Language;
                 currentMovie.Rating = newMovie.Rating;
