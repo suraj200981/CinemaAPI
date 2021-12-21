@@ -47,7 +47,7 @@ namespace CinemaAPI
 
 
             //only creates the DB is it does not exist
-            dbContext.Database.EnsureCreated();
+         //this method is not useful for when changes are made to schema:   dbContext.Database.EnsureCreated();
 
             app.UseEndpoints(endpoints =>
             {

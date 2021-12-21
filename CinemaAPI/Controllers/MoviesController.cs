@@ -75,6 +75,7 @@ namespace CinemaAPI.Controllers
 
                 currentMovie.Name = newMovie.Name;
                 currentMovie.Language = newMovie.Language;
+                currentMovie.Rating = newMovie.Rating;
 
                 _dbContext.SaveChanges();
 
