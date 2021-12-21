@@ -39,6 +39,9 @@ namespace CinemaAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            //wwwroot folder interaction
+            app.UseStaticFiles();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

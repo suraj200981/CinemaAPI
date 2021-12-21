@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -50,19 +51,29 @@ namespace CinemaAPI.Controllers
             }
         }
 
+
         // POST api/<MoviesController>
         [HttpPost]
-        public IActionResult Post([FromBody] Movie newMovie)
+        public IActionResult Post([FromForm] Movie newMovie)
         {
+            var uniqueNameForImage = Guid.NewGuid();
+            var filePath = Path.Combine("wwwroot", uniqueNameForImage + ".jpg");
+
+            if (newMovie.Image!=null) {
+
+                var fileStream = new FileStream(filePath, FileMode.Create);
+                newMovie.Image.CopyTo(fileStream);
+            }
+
+            newMovie.ImageUrl = filePath.Remove(0,7);
             _dbContext.Movies.Add(newMovie);
             _dbContext.SaveChanges();
-
             return StatusCode(StatusCodes.Status201Created);
         }
 
         // PUT api/<MoviesController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Movie newMovie)
+        public IActionResult Put(int id, [FromForm] Movie newMovie)
         {
             var currentMovie = _dbContext.Movies.Find(id);
 
@@ -72,6 +83,16 @@ namespace CinemaAPI.Controllers
             }
             else
             {
+                var uniqueNameForImage = Guid.NewGuid();
+                var filePath = Path.Combine("wwwroot", uniqueNameForImage + ".jpg");
+                if (newMovie.Image != null)
+                {
+                    var fileStream = new FileStream(filePath, FileMode.Create);
+                    newMovie.Image.CopyTo(fileStream);
+                    currentMovie.ImageUrl = filePath.Remove(0, 7);
+
+                }
+
 
                 currentMovie.Name = newMovie.Name;
                 currentMovie.Language = newMovie.Language;
