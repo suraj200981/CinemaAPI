@@ -22,16 +22,32 @@ namespace CinemaAPI.Controllers
             _dbContext = dbContext;
         }
 
-
-        // GET: api/<MoviesController>
+        //api/movies/?sort=asc or api/movies/?sort=desc for sorting if
         [Authorize]
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string sort)
         {
+
+            if (string.IsNullOrEmpty(sort))
+            {
+                return Ok(_dbContext.Movies);
+
+            }
+            else if (sort.Equals("desc"))
+            {
+                return Ok(_dbContext.Movies.OrderByDescending(m => m.Rating));
+
+            }
+            else if (sort.Equals("asc"))
+            {
+                return Ok(_dbContext.Movies.OrderBy(m => m.Rating));
+
+            }
+
             return Ok(_dbContext.Movies);
+
         }
 
-        // GET api/<MoviesController>/5
         [Authorize]
         [HttpGet("{id}")]
         public IActionResult Get(int id)
@@ -49,6 +65,8 @@ namespace CinemaAPI.Controllers
                 return Ok(movieFound);
             }
         }
+
+
 
 
         [Authorize(Roles = "Admin")]
