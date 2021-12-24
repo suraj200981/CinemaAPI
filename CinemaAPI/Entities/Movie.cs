@@ -26,6 +26,7 @@ namespace CinemaAPI.Entities
         public double Rating { get; set; }
         public string Genre { get; set; }
         public string TrailerUrl { get; set; }
+        public double TicketPrice { get; set; }
 
         /*
          * It is bad practice to store image in database, which is why
