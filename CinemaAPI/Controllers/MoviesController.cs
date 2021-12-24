@@ -21,26 +21,26 @@ namespace CinemaAPI.Controllers
         {
             _dbContext = dbContext;
         }
-
+        //?pageNumber=1&pageSize=2 for each page to have 2 movies displaying
         //api/movies/?sort=asc or api/movies/?sort=desc for sorting if
         [Authorize]
         [HttpGet]
-        public IActionResult Get(string sort)
+        public IActionResult Get(string sort, int pageNumber, int pageSize)
         {
 
             if (string.IsNullOrEmpty(sort))
             {
-                return Ok(_dbContext.Movies);
+                return Ok(_dbContext.Movies.Skip((pageNumber-1) * pageSize).Take(pageSize));
 
             }
             else if (sort.Equals("desc"))
             {
-                return Ok(_dbContext.Movies.OrderByDescending(m => m.Rating));
+                return Ok(_dbContext.Movies.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderByDescending(m => m.Rating));
 
             }
             else if (sort.Equals("asc"))
             {
-                return Ok(_dbContext.Movies.OrderBy(m => m.Rating));
+                return Ok(_dbContext.Movies.Skip((pageNumber - 1) * pageSize).Take(pageSize).OrderBy(m => m.Rating));
 
             }
 
