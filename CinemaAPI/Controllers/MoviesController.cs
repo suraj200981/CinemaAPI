@@ -68,6 +68,30 @@ namespace CinemaAPI.Controllers
 
 
 
+        //find movies via search
+        [Authorize]
+        [HttpGet("[action]")]
+        //api/movies/findmovies?movieName=Superbad  this would be the url for this method
+        public IActionResult FindMovies(string movieName) {
+
+            var movieFound = from movie in _dbContext.Movies
+                             where movie.Name.StartsWith(movieName)
+                             select new
+                             {
+                                 Id = movie.Id,
+                                 Name = movie.Name,
+                                 ImageUrl = movie.ImageUrl
+                             };
+
+            if (movieFound.All(a=> string.IsNullOrEmpty(a.Name)))
+            {
+                return NotFound("We could not find this movie...");
+            }
+
+            return Ok(movieFound);
+        }
+
+
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
