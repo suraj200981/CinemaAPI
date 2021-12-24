@@ -56,7 +56,6 @@ namespace CinemaAPI.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] User user) {
 
-
             var userEmail = _dbContext.Users.FirstOrDefault(u => u.Email == user.Email);
 
             if (userEmail == null) {
@@ -66,12 +65,12 @@ namespace CinemaAPI.Controllers
             if (!SecurePasswordHasherHelper.Verify(user.Password, userEmail.Password)) {
                 return Unauthorized();
             }
-
             //when login successfull we will generate JWT Token
             var claims = new[]
                 {
                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
                    new Claim(ClaimTypes.Email, user.Email),
+                   new Claim(ClaimTypes.Role, userEmail.UserType)
                 };
             var token = _auth.GenerateAccessToken(claims);
             return new ObjectResult(new
@@ -84,8 +83,5 @@ namespace CinemaAPI.Controllers
                 user_id = userEmail.Id
             });
         }
-
-
-
     }
 }
