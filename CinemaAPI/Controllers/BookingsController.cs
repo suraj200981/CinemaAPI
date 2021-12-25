@@ -26,8 +26,49 @@ namespace CinemaAPI.Controllers
         [HttpGet]
         public IActionResult Get() {
 
-            return Ok(_dbContext.Bookings);
+
+            var bookingData = from booking in _dbContext.Bookings
+                              join user in _dbContext.Users on booking.UserId equals user.Id
+                              join movie in _dbContext.Movies on booking.MovieId equals movie.Id
+                              select new
+                              {
+                                  Id = booking.Id,
+                                  BookingTime = booking.ReservationTime,
+                                  CustomerName = user.Id,
+                                  MovieName = movie.Name
+                              };
+
+            return Ok(bookingData);
         
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+
+            var bookingData = from booking in _dbContext.Bookings
+                              join user in _dbContext.Users on booking.UserId equals user.Id
+                              join movie in _dbContext.Movies on booking.MovieId equals movie.Id
+                              where booking.Id == id
+                              select new
+                              {
+                                  Id = booking.Id,
+                                  BookingTime = booking.ReservationTime,
+                                  CustomerName = user.Id,
+                                  MovieName = movie.Name,
+                                  Email = user.Email,
+                                  Qty = booking.Qty,
+                                  Price = booking.Price,
+                                  Phone = booking.Phone,
+                                  PlayingDate = movie.PlayingDate,
+                                  PlayingTime = movie.PlayingTime
+
+                              };
+
+            return Ok(bookingData);
+
         }
 
 
@@ -42,6 +83,29 @@ namespace CinemaAPI.Controllers
             _dbContext.SaveChanges();
 
             return StatusCode(StatusCodes.Status201Created);
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var bookingToRemove = _dbContext.Bookings.Find(id);
+
+
+            if (bookingToRemove == null)
+            {
+                return NotFound("We could not find this reservation...");
+            }
+            else
+            {
+
+                _dbContext.Bookings.Remove(bookingToRemove);
+
+                _dbContext.SaveChanges();
+
+                return Ok("Reservation has been successfully deleted");
+            }
         }
     }
 }
